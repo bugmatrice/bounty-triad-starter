@@ -1,15 +1,26 @@
+import os
 import time
-from watchers.secrets_watcher import score_snippet
+import yaml
+from watchers import secrets_watcher
 
-print("🚀 Shadow scanner lancé...")
+def load_scope():
+    """Charge le scope depuis config/scope.yaml"""
+    with open("config/scope.yaml", "r") as f:
+        return yaml.safe_load(f)
 
-# Exemple de boucle simple
-while True:
-    # Ici plus tard on scannera les repos / fichiers
-    test = score_snippet("test.env", "aws_access_key_id=EXAMPLE123")
-    if test > 0:
-        print(f"[ALERTE] Secret trouvé avec score {test}")
-    else:
-        print("Rien trouvé, on continue...")
+def main():
+    print("🚀 Shadow Scanner lancé...")
 
-    time.sleep(10)  # pause de 10 secondes avant le prochain scan
+    scope = load_scope()
+    print(f"📌 Scope chargé : {scope}")
+
+    # Boucle infinie : scanner toutes les X secondes
+    while True:
+        try:
+            secrets_watcher.scan_repo()
+        except Exception as e:
+            print(f"❌ Erreur: {e}")
+        time.sleep(30)  # scanner toutes les 30 sec
+
+if __name__ == "__main__":
+    main()
