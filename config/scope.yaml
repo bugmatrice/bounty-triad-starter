@@ -4,7 +4,7 @@ program:
   contact: "security@demo.com"
   policy_url: "https://demo.com/security"
 github:
-  orgs: ["TON_PSEUDO_GITHUB"]   # ← remplace par ton pseudo pour tester
+  orgs: ["bugmatrice"]   # ← remplace par ton pseudo pour tester
 dns:
   root_domains: ["demo.com"]
   wordlist_hint: ["dev","staging","static","cdn","api"]
