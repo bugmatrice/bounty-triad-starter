@@ -50,8 +50,7 @@ def watch_user_or_org(name):
         for c in ev.get("payload",{}).get("commits",[]):
             findings += scan_commit(repo, c.get("sha"))
     return findings
-
-def main():
+    def main():
     with open("config/scope.yaml","r",encoding="utf-8") as f:
         scope = yaml.safe_load(f)
     orgs = scope.get("github",{}).get("orgs",[])
@@ -60,10 +59,22 @@ def main():
         for org in orgs:
             try:
                 hits = watch_user_or_org(org)
-                for h in hits: print(json.dumps(h, ensure_ascii=False))
+                for h in hits:
+                    print(json.dumps(h, ensure_ascii=False))
             except Exception as e:
                 print(json.dumps({"error": str(e), "org": org}))
         time.sleep(poll)
+
+# --- wrapper appelé par l'orchestrateur (un seul passage, pas de boucle) ---
+def run(scope):
+    orgs = (scope.get("github", {}) or {}).get("orgs", [])
+    for org in orgs:
+        try:
+            hits = watch_user_or_org(org)
+            for h in hits:
+                print(json.dumps(h, ensure_ascii=False))
+        except Exception as e:
+            print(json.dumps({"error": str(e), "org": org}))
 
 if __name__ == "__main__":
     main()
