@@ -1,26 +1,13 @@
-import os
-import time
-import yaml
+# --- make parent folder importable ---
+import sys, os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+# now imports work no matter where Render runs from
 from watchers import secrets_watcher
 
-def load_scope():
-    """Charge le scope depuis config/scope.yaml"""
-    with open("config/scope.yaml", "r") as f:
-        return yaml.safe_load(f)
-
-def main():
-    print("🚀 Shadow Scanner lancé...")
-
-    scope = load_scope()
-    print(f"📌 Scope chargé : {scope}")
-
-    # Boucle infinie : scanner toutes les X secondes
-    while True:
-        try:
-            secrets_watcher.scan_repo()
-        except Exception as e:
-            print(f"❌ Erreur: {e}")
-        time.sleep(30)  # scanner toutes les 30 sec
-
 if __name__ == "__main__":
-    main()
+    # lance directement le watcher (boucle interne dans secrets_watcher)
+    secrets_watcher.main()
